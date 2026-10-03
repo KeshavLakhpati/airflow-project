@@ -1,0 +1,7 @@
+-- OPTIONAL / ADVANCED: let Snowflake keep a mart fresh by itself (no Airflow task needed).
+USE ROLE AIRFLOW_ROLE; USE WAREHOUSE AIRFLOW_WH; USE DATABASE AIRFLOW_DB;
+
+CREATE OR REPLACE DYNAMIC TABLE MARTS.DT_MONTHLY_REVENUE
+  TARGET_LAG = '1 hour' WAREHOUSE = AIRFLOW_WH AS
+SELECT DATE_TRUNC('month', order_date) AS month, SUM(revenue) AS revenue, SUM(orders_count) AS orders_count
+FROM MARTS.DAILY_SALES GROUP BY 1;
